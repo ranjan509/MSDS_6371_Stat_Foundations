@@ -49,12 +49,19 @@ datalines;
 1	49
 1	49
 1	51
+1   	52
+1 	54
 ;
 
 proc print data = jobs;
 run;
 
 proc ttest data = jobs;
+	class haveJob;
+	var age;
+run;
+
+proc ttest data = jobs alpha = .1;
 	class haveJob;
 	var age;
 run;
