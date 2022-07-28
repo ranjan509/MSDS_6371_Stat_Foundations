@@ -75,16 +75,76 @@ dim(Clean_FullData)
 # complete information on a house. This sample is more than plenty to configure
 # a model. 
 
+Clean_FullData$Neighborhood = as.factor(Clean_FullData$Neighborhood)
+Clean_FullData$YrSold = as.factor(Clean_FullData$YrSold)
+
+
 ####################################### Data Selection // Analysis Question 1
 
 pattern = c("NAmes","Edwards","BrkSide")
 
-AQ1_Data = Clean_FullData %>% dplyr::select(Neighborhood,GrLivArea,SalePrice) %>% filter(grepl(paste(pattern, collapse="|"), Neighborhood))
-
-AQ1_Data$Neighborhood = as.factor(AQ1_Data$Neighborhood)
+AQ1_Data = Clean_FullData %>% dplyr::select(Neighborhood,GrLivArea,SalePrice) %>% 
+  filter(grepl(paste(pattern, collapse="|"), Neighborhood)) %>%
+  mutate(GrLivArea = round(GrLivArea / 100))
 
 summary(AQ1_Data)
 
+## Plotting the data
+
+ggplot(AQ1_Data, aes(x = GrLivArea, y = log(SalePrice))) + geom_point(aes(color = Neighborhood), alpha = .8) + 
+  geom_smooth(method='lm', se = F, color = 'black')
+
+
+## Model
+
+AQ1Model = lm((log(SalePrice)~GrLivArea+Neighborhood+Neighborhood*GrLivArea),data = AQ1_Data)
+summary(AQ1Model)
+
+par(mfrow = c(2,2))
+
+plot(AQ1Model)
+
+par(mfrow = c(1,1))
+
+# Looking at the plots, it's clear to see that there are points that are neccesary
+# to remove. Looking at Resids V Lev, we can see that are points that should be 
+# looked at. 
+
+# The ADJ r^2 value seems pretty low, at .4206, let see if removing the points mentioned
+# will increase it. 
+
+OutRem_AQ1_Data = AQ1_Data
+
+OutRem_AQ1_Data = OutRem_AQ1_Data[-c(70,95,119,136,248,262),]
+
+AQ1Model = lm((log(SalePrice)~GrLivArea+Neighborhood+Neighborhood*GrLivArea),data = OutRem_AQ1_Data)
+
+summary(AQ1Model)
+
+par(mfrow = c(2,2))
+
+plot(AQ1Model)
+
+par(mfrow = c(1,1))
+
+# Okay, these graphs look a lot better, and the ADJ R^2, went up to .49. The model still isn't
+# great, but that's also because of the exclusion of so many other variables. 
+
+
+# delete later
+#
+# quick note on log(y) transform
+# https://www.real-statistics.com/multiple-regression/multiple-regression-log-transformations/
+#
+# build model here
+
+# Also need to do assumptions formally
+
+par(mfrow = c(2,2))
+
+plot(AQ1Model)
+
+par(mfrow = c(1,1))
 
 
 
@@ -100,37 +160,20 @@ summary(AQ1_Data)
 
 
 
+####################################### Data Selection // Analysis Question 2
+
+CorrMatData = Clean_FullData %>% dplyr::select(where(is.numeric))
+
+CleanCorrMatrix = round(cor(CorrMatData), 1)
+
+ggcorrplot(CleanCorrMatrix, hc.order = TRUE, type = "lower", outline.col = "white")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ggplot(Clean_FullData, aes(x=YrSold, y=log(SalePrice), fill = YrSold)) + geom_boxplot() + 
+  theme(legend.position="none") + 
+  scale_fill_brewer(palette="Dark2") + 
+  labs(title = "Log(SalePrice) Over the Years)", x = "Year Sold", y = "Log(SalePrice)")
+  
 
 
 
