@@ -77,8 +77,9 @@ dim(Clean_FullData)
 
 ####################################### Data Selection // Analysis Question 1
 
-AQ1_Data = Clean_FullData %>% dplyr::select(Neighborhood,GrLivArea,SalePrice) %>% 
-  filter(grepl('Names|BrkSide|Edwards', Neighborhood))
+pattern = c("NAmes","Edwards","BrkSide")
+
+AQ1_Data = Clean_FullData %>% dplyr::select(Neighborhood,GrLivArea,SalePrice) %>% filter(grepl(paste(pattern, collapse="|"), Neighborhood))
 
 AQ1_Data$Neighborhood = as.factor(AQ1_Data$Neighborhood)
 
