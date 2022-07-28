@@ -19,13 +19,13 @@ library(olsrr)
 
 setwd("D:/School/GitHub/MSDS_6371_Stat_Foundations/FinalProject")
 
-FullData = read_csv("Data/train.csv")
+FullData = read.csv("Data/train.csv", na.strings = "NA", strip.white = T)
 
-Clean_FullData = read.csv("Data/train.csv", na.strings = "NA", strip.white = T)
+Clean_FullData = FullData
 
-Submission_TestData  = read_csv("Data/test.csv")
+Submission_TestData  = read.csv("Data/test.csv", na.strings = "NA", strip.white = T)
 
-############# Data Cleaning
+####################################### Data Cleaning
 
 summary(Clean_FullData)
 
@@ -64,16 +64,25 @@ yRow
 length(yRow)
 Clean_FullData = Clean_FullData[-yRow,]
 
+# Now that the dataset is cleaned
 
+rm(i,x,yCol,yRow)
 
+summary(Clean_FullData)
+dim(Clean_FullData)
 
+# We can see that there are 76 variables, and 1094 rows, where each row has
+# complete information on a house. This sample is more than plenty to configure
+# a model. 
 
+####################################### Data Selection // Analysis Question 1
 
+AQ1_Data = Clean_FullData %>% dplyr::select(Neighborhood,GrLivArea,SalePrice) %>% 
+  filter(grepl('Names|BrkSide|Edwards', Neighborhood))
 
+AQ1_Data$Neighborhood = as.factor(AQ1_Data$Neighborhood)
 
-
-
-
+summary(AQ1_Data)
 
 
 
