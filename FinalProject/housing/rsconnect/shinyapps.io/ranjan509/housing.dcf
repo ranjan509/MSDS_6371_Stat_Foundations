@@ -1,0 +1,13 @@
+name: housing
+title: housing
+username:
+account: ranjan509
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6710791
+bundleId: 6147394
+url: https://ranjan509.shinyapps.io/housing/
+when: 1659137827.20194
+lastSyncTime: 1659137827.20194
+asMultiple: FALSE
+asStatic: FALSE
